@@ -74,9 +74,9 @@
     </div>
 
     <script>
-        // !!! IMPORTANT !!!
-        // PASTE YOUR GOOGLE APPS SCRIPT WEB APP URL HERE
-        const SCRIPT_URL = 'YOUR_GOOGLE_APPS_SCRIPT_URL_HERE';
+        // !!! CORRECTED !!!
+        // The URL is now in the correct variable.
+        const SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbyNu8-M4CUl3uYgEumidpl-9bLV0rJRS4bPGfWVJAGU8IepbEBDy2ObDIGF-hbUwLdG/exec';
 
         // Store data globally to access it for the modal
         let itemsData = [];
@@ -92,7 +92,11 @@
             // Define the callback function on the window object
             window[callbackName] = function(data) {
                 // Data has been received, process it
-                displayItems(data.items);
+                if (data && data.success) {
+                    displayItems(data.items);
+                } else {
+                    handleFetchError();
+                }
 
                 // Clean up: remove the script tag and the callback function
                 document.body.removeChild(script);
@@ -105,10 +109,7 @@
             
             // Handle errors, e.g., if the script fails to load
             script.onerror = function() {
-                loadingIndicator.style.display = 'none';
-                const noItemsMessage = document.getElementById('no-items');
-                noItemsMessage.classList.remove('hidden');
-                noItemsMessage.textContent = 'เกิดข้อผิดพลาด: ไม่สามารถโหลดข้อมูลได้';
+                handleFetchError();
                 
                 // Clean up on error
                 document.body.removeChild(script);
@@ -117,6 +118,14 @@
             
             // Append the script to the body to trigger the request
             document.body.appendChild(script);
+        }
+        
+        function handleFetchError() {
+            const loadingIndicator = document.getElementById('loading');
+            loadingIndicator.style.display = 'none';
+            const noItemsMessage = document.getElementById('no-items');
+            noItemsMessage.classList.remove('hidden');
+            noItemsMessage.textContent = 'เกิดข้อผิดพลาด: ไม่สามารถโหลดข้อมูลได้';
         }
 
         // 2. Function to display items on the page
@@ -211,7 +220,9 @@
 
         // 4. Initial data load when the page is ready
         document.addEventListener('DOMContentLoaded', function() {
-            if (SCRIPT_URL === 'https://script.google.com/macros/s/AKfycbyNu8-M4CUl3uYgEumidpl-9bLV0rJRS4bPGfWVJAGU8IepbEBDy2ObDIGF-hbUwLdG/exec') {
+            // !!! CORRECTED !!!
+            // This now correctly checks for the placeholder text.
+            if (SCRIPT_URL === 'YOUR_GOOGLE_APPS_SCRIPT_URL_HERE') {
                  const loadingIndicator = document.getElementById('loading');
                  loadingIndicator.style.display = 'none';
                  const container = document.getElementById('items-container');
